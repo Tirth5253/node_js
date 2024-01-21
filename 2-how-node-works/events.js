@@ -27,7 +27,7 @@ myEmmiter.emit('newSale',9);                                                    
 const server=http.createServer();
 
 server.on('request',(req,res)=>{
-    console.log('request recieved');
+    console.log('request recieved');                                                                //here we do not have to define the emit bcse there is the inbuild emiter for the server
     res.end('Request recieved');
 });
 
@@ -42,4 +42,4 @@ server.on('close',(req,res)=>{
 
 server.listen(8000,'127.0.0.1',()=>{
     console.log('server has been started');
-})
+});
