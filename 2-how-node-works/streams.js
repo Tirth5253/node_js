@@ -18,8 +18,9 @@ const server=require('http').createServer();
 server.on('request',(req,res)=>{
 
 
-//                    =====solution1 basic====
-//   fs.readFile('./starter/test-file.txt','utf-8',(err,data)=>{                                  //as we can see that this function that is trying to access the file or read it ,has over 10,000 files so by this method we will read the all the 10,000 line all at once ,so that will cause our applicarion very slow bcse tons of requests are hitting the server
+//                    =====solution1 basic==== 
+
+//   fs.readFile('./starter/test-file.txt','utf-8',(err,data)=>{                                  //as we can see that this function that is trying to access the file or read it ,has over 10,000 lines so by this method we will read the all the 10,000 line all at once ,so that will cause our applicarion very slow bcse tons of requests are hitting the server
 //      if(err) console.log("there is an error 😒");
 //      res.end(data);
 //   });

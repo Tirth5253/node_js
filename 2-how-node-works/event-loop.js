@@ -6,7 +6,7 @@ process.env.UV_THREADPOOL_SIZE=4;                                           //TH
 
 //here this is the code for the demostration of the "event-loop" in the NODE.js 
 //so the event loop is basically runs all the callbacks that are not included in the "top level" code means it will be included in the inside functions
-//all the event loop has the ques named the "callback" means it will have that type of callbacks stored in that
+//all the event loop has the queues named the "callback" means it will have that type of callbacks stored in that
 //so the event loop has the 4 steps in the cycle
 //1.EXPIRED TIMER CALLBACK ===> this is the callback's that firstly runs means the callback type like "setTimeout" will run
 //2. I/O POLLING AND CALLBACKS ===> in this second step the input and output operations will perform means opens like  "FILE READ AND WRITE"
@@ -34,7 +34,7 @@ fs.readFile('./starter/test-file.txt','utf-8',()=>{
      setTimeout(()=>{ console.log("Timer 3 finished")},3000);
      setImmediate(()=>console.log("Immediate 1 finished"));                            //here in the output you can see that the setImmediate got called before the 2 setTimeout bcse when the evet loop runs it sees that in "setTimeout" and "setImmediate" there is not any "I/O" callback so thats the reason wht the immediate run first then timer
 
-     process.nextTick(()=>console.log("process.nextTick"))                            //here we can see that the "process.nextTick" is executed first ahead of all the callback functions bcse it is a part of the microtasks queue so it will get executed before each phase so nextTick can be executed 2 times in the event loop but the "setImmediate" can be run only once per loop , so their work is opposite as their names
+     process.nextTick(()=>console.log("process.nextTick"))                            //here we can see that the "process.nextTick" is executed first ahead of all the callback functions bcse it is a part of the microtasks queue ,so it will get executed before each phase so nextTick can be executed 2 times in the event loop but the "setImmediate" can be run only once per loop , so their work is opposite as their names
 //=========================================code for cryptography bcse of THREAD POOL====================================
              crypto.pbkdf2('password','salt',100000,1024,'sha512',()=>{
              console.log(Date.now()-start,"password encryption")
