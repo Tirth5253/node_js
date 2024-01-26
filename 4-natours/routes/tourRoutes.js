@@ -11,7 +11,7 @@ const tourController = require("./../controllers/tourController");              
 router
   .route("/")
   .get(tourController.getAllTours)
-  .post(tourController.checkBody, tourController.createTour);                                          //here we have making the "middlware chaining" means that in the POST request first the "checkBody" middleware function will be get run and then further the code will proceeds
+  .post( tourController.createTour);                                          //here we have making the "middlware chaining" means that in the POST request first the "checkBody" middleware function will be get run and then further the code will proceeds
 
 //==========================Responding to URL parameters means (when we hit '127.0.0.1:3000/api/v1/tours/1') it will gives us the first object
 //========================================PATCH & DELETE METHOD===========================================================
