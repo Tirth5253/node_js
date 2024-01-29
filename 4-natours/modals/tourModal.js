@@ -57,7 +57,19 @@ const tourSchema = new Mongoose.Schema({
     default:Date.now(),                                                             //this is saying that if the date is not defined than we have it fefault as now date
   },
   startDates:[Date]
-});
+},{
+    toJSON:{virtuals:true},                                                         //here in this line it says that every time when we call the JSON then we want "virtual" fields to b part of the DB, by default it is not shown
+    toObject:{virtuals:true} 
+  }
+);
+
+//=============================================VIRTUAL PROPERTIES================================================
+                                                                                     //so the virtual properties are the properties that we write in the schema but not stored in the database EX. the use of that is when we derives the a property from some another 2 property then that 2 property are no need to store in the database
+                                                                                    // here we counts the duration of the Tour
+tourSchema.virtual('durationWeeks').get(function() {                                //NOTE : here we have used the regular function instead of the arrow bcse arrow fun. does not get its own "this" keyword
+  return this.duration / 7;  
+})
+
 
 const Tour= Mongoose.model("Tour", tourSchema);                                        //here we will merge that upper schema to our modal the first argument is modal name (first letter in uppercase) and the second is schema name that we want to implement
 module.exports = Tour;

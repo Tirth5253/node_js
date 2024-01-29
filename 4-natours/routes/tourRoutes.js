@@ -6,7 +6,18 @@ app.use("/api/v1/tours", router);                                               
 
 const tourController = require("./../controllers/tourController");                                      //now all the functions that are exported now in the "tourController"
 
+//======for aggregation Pipeline's route=============
+
+router.route("/tour-stats").get( tourController.getTourStats);
+router.route("/monthly-plan/:year").get( tourController.getMonthlyPlan);
+
 // router.param("id", tourController.checkID);                                                          //here is the another type of middleware that we can implement using the "checkID" in the tourController as a 2nd args, so this middleware will save us from writing the "id" validation code everywhere and also this works only for TOUR data bcse the middleware is in the tourController, when the program reaches this line it will then go to "checkID" in the tourController so there the our id validation occurs and then we returned the output acc. to that
+
+
+// ==============================Aliasing in the API======================
+
+router.route('/top-5-cheap').get(tourController.aliasTopTours ,  tourController.getAllTours)
+
 
 router
   .route("/")
@@ -21,5 +32,7 @@ router
   .get(tourController.getTour)
   .patch(tourController.updateTour)
   .delete(tourController.deleteTour);
+
+
 
 module.exports = router;

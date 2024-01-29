@@ -7,7 +7,7 @@ const Tour=require('./modals/tourModal')
 dotenv.config({ path: "./config.env" });
 
 Mongoose.connect(process.env.DATABASE, {
-  useNewUrlParser: true,                                                      //here in this line we have used the mongoose ,that is the library to connect our data base into with the Node.js and this ".connect()" method will return the promise that will be handled by the ".then" that will shares the information about the db connection
+  useNewUrlParser: true,                                                      //here in this line we have used the mongoose.connect() ,that is the library to connect our data base into with the Node.js and this ".connect()" method will return the promise that will be handled by the ".then" that will shares the information about the db connection
   useCreateIndex: true,
   useFindAndModify: false,
   useUnifiedTopology: true,

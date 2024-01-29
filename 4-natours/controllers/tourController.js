@@ -2,33 +2,18 @@
 //we also have "exports." before all the functions bcse we will export all of them so we can use them in the other file means "tourRoutes"
 
 const Tour=require('../modals/tourModal');
+const APIFeatures=require('../utils/apiFeatures')
 
-// const fs = require("fs");
-// const tours = JSON.parse(
-//   fs.readFileSync(`${__dirname}/../starter/dev-data/data/tours-simple.json`),
-// );
 
-// exports.checkID = (req, res, next, val) => {
-//   console.log(`the tour id is ${val}`);                                                          //here is the another middleware function that we passes in the middleware that we have make to want to check if user has types the valid "id" or not and in this perticular middleware we have the 4 parameters and the 4th one is the  "val"  that contains the value of the "id" ,NOTE: you can have used the function and call in all the callbacks but that's the how the EXPRESS works in pipelines
-//   if (req.params.id * 1 > tours.length) {
-//     return res.status(404).json({
-//       status: "fail",
-//       message: "Invalid ID",
-//     });
-//   }
-//   next();
-// };
+//=======================================MIDDLEWARE Function of the   Aliasing In Api fror more read below===========================
+                                                                                                   //so the aiasing means if the user want the top 5 cheap tour then he have to write the header that looks like this '127.0.0.1:3000/api/v1/tours?imit=2&sort=-price'  but the problem is user don't know these things he will simply write things like 'top-5-tours' so this function will basically convert them to user friendly
+                   exports.aliasTopTours=(req,res,next)=>{
+                              req.query.limit='5';
+                              req.query.sort='-price';
+                              req.query.fields='name,price,ratingsAverage,summery,difficulty';
+                              next();
+                   }                                        
 
-// exports.checkBody = (req, res, next) => {
-//   console.log("there is no name or price");                                                 //here is the middleware function that will be checking the "req.body" means the message send from the PostMan have "Name" or "Price" or not
-//   if (!req.body.name || !req.body.price) {
-//     return res.status(400).json({
-//       status: "fail",
-//       message: "No Name or Price",
-//     });
-//   }
-//   next();
-// };
 
 //================================HERE WE HAVE MADE THE all TOUR's CALLBACKS SEPERATELY so later we export===============================
 
@@ -36,52 +21,19 @@ const Tour=require('../modals/tourModal');
 exports.getAllTours = async(req, res) => {                                                                            //here this line will says that it will fetches the query that is written in the postman to get the speciffic data,means if i write this in the header of postman "127.0.0.1:3000/api/v1/tours?duration=5&difficulty=easy" then this console.log will return me this { duration: '5', difficulty: 'easy' },  
   try{
     
-
-//  1A.      ======Build Query & filtering=======
-  const queryObj={...req.query};                                                                      //here we have created the "shallow Copy" of the "req.query" object by destruct. means if we make changes in the "queryObj" then it will not affects the "req.query" WHY WE NEED ==> suppose we have a query in the header like   "127.0.0.1:3000/api/v1/tours?duration=5&difficulty=easy&page=2"   so here we can see that "page" is the pagination object so it needs in the pagination   means it will be not in the database so we may nedd to update "req.query" thats why                 
-  const excludedFields=['page','sort','limit','fields'];                                             //this is the fields that we want to remove from our querObj so we can have only purely "req.query" elements
-  
-  excludedFields.forEach(el=>delete queryObj[el]);                                                   //here is the function that we have made using the "for each" bcse we don't want to create a new array so the "excludedFields" will be deleted from the "queryObj"
+//for more on Api feature read apiFeature.js   
 
 
-  //1B.  ===================ADVANCE FILTERING===================================
-                                                                                               //so what is advance filtering called so lets take example we want to type query in the header of the postman like this "127.0.0.1:3000/api/v1/tours?duration[lte]=5&difficulty=easy" so this says that we want the suration that is lessthan 5 so if want to type query in the magoose that will be like this  "{ duration: { $lte: '5' }, difficulty: 'easy' }" and if you concole it the terminal says the "{ duration: { lte: '5' }, difficulty: 'easy' }"  so there is only a difference of the "$" in both so we will add the "$" in the "req.query" so we can execute it like the mongoose query
-    let querystr=JSON.stringify(queryObj);
-    querystr=querystr.replace(/\b(gte|gt|lte|lt)\b/g,match=>`$${match}`);                      //so here we have writen the code of the replacement in replace the code written "//" called teh regulare exprassion and the "\b" is used to replace the string that only consists "lte" like the words means word like "mnlte" will not replaced,and the "/g" will replaces these words at all the where not the first time and theres the second argument is callback function that will replaces the match ==> $match means lte ===> $lte
-    console.log(JSON.parse(querystr))                                                          //here we have again converts the string to "JSON object"
-
-    let query=Tour.find(JSON.parse(querystr));                                                                  //why we use the "await" here later ,bcse if you use query "Tour.find(queryObj)" directly in the await then we have no chance to edit further Ex. if i want to add the methods like the "page" "linit" etc bcse once we writes the await then the data will get send there is no scope of the editing, thats wht we use a variable "query" to store that data before it goes to await,and here we have defined the "query" by let so later we can change it
-
-
-//2.    ===================== Sorting ====================
-
-if(req.query.sort){
-  const sortBy=req.query.sort.split(',').join('  ');                                        //this is the query when there is a tie b/w the prices than they will be ranked in terms of the ratingsAvereage,this line will make our types this "-price,ratingsAverage" to like this that mongoose can understand "-price ratingsAverage"
-  console.log(sortBy);
-    query=query.sort(sortBy);
-}else {
-  query=query.sort('-createdAt')
-}
-
-
-//3.  ==================Field Limiting====================
-                                                                                           //here the fields limiting means that the user only wants the certain fields ex "127.0.0.1:3000/api/v1/tours/fields"
-if(req.query.fields){
-  const fields=req.query.fields.split(',').join(' ');
-  query=query.select(fields)
-}else{
-  query=query.select('-__v')
-}
-
-  
   console.log(req.query); 
   //  ====executes Query ====
-  const tours=await query;                                                                         //this will returns the all the data related to the "Tour",so their is the "req.query" written in it means that it will search or find the data on the basis of the "req.query" 
-  console.log()
+  const features=new APIFeatures(Tour.find(),req.query).filter().sort().limitFields().paginate();            //for this explanation read in the "apiFeatures.js"                                  
+  const tours=await features.query;                                                                         //this will returns the all the data related to the "Tour",so their is the "req.query" written in it means that it will search or find the data on the basis of the "req.query" 
+ 
+  // =====sends responce===
   res.status(200).json({
     status: "success",
     results: tours.length,
-    data: {
+    data: { 
       tours,
     },
   });}catch(err){
@@ -207,3 +159,106 @@ exports.deleteTour = async (req, res) =>{
 
  
 };
+
+
+
+//=================================================AGGREGATION PIPELINE===========================================
+
+                                                                                                         //so the the aggregation pipeline means our collection will go through the certain operations like "averages" ,"min and max val" etc ,
+exports.getTourStats=async(req,res)=>{  
+
+  try{
+     
+      const stats= await Tour.aggregate([                                                                //here in the array we defines the our various stages in the agrreagate functions like various filter query,each stage will be written in the object form, so in the first the "match" filter performed then in result of that we perform "group" filter and then "sort"
+
+         {
+            $match:{ratingsAverage : {$gte : 4.5}}                                               
+         },
+         {
+            $group:{
+              _id :'$difficulty',                                                           //lets say that we have id="difficulty" then this code will execute and we will get the all these results "numRatings,avgRatings" etc for the each of the difficulty EX. for easy we will have these data,for medium and for Hard also so it will calculte all these fields on the basis of the difficulty
+              numTours:{$sum : 1},
+              numRatings:{$sum : '$ratingsQuantity'},
+              avgRating:{$avg : '$ratingsAverage'},                                         //in the "avg" query we have to define the thing that we want to average in '' wi the $,so this will return all the documents stat data in 1 json on the basis of the avgRating,avgPrice
+              avgPrice:{$avg:'$price'},
+              minPrice:{$min : '$price'},
+              maxPrice:{$max : '$price'}
+            }
+         },
+         {
+          $sort:{avgPrice:1}                                                               //here the 1 means we want in acsending order
+         }
+
+      ])
+      res.status(200).json({
+        status: "success",
+        data: {
+          data:stats
+        },
+      }); 
+  }
+  catch(err){
+      
+    res.status(400).json({
+      status:"fail",
+      message:err 
+    })
+
+  }
+}                                                                                                        
+
+//=================================CHALLANGE BASED ON THE AGGREGATION PIPELINE======================================
+                                                                                        //so in this challange we have to find the bussiest month of the year for tours for the "natours" company 
+exports.getMonthlyPlan=async (req,res)=>{
+  try{
+
+      const year=req.params.year*1;                                                      //so what will the "unwind" do? ===>   so suppose the startDate has array and it has 3 elements ex. 1,2,3  so when we use the "unwind" for the "startDate" then it will spread the object like that , it will writes the object and then it will have startingDate as only 1, and then in another same object have starting date as 2 and then 3 so in total we have the 9X3=27 outputs
+      const plan=await Tour.aggregate([{
+ 
+          $unwind: '$startDates'
+         
+      },
+      {                                                                                //used match for selecting the year , here we have written the code for that will matches for 2021 year ">1-jan   <31-dec."
+        $match: {startDates:{
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+        }}
+      },
+      {
+        $group: {                                                                        //here we have used the group method in that we if we have id=1 then its jan. and then numToursStart will give the numbers in that month, "$month" is a method or the query of the mongoose 
+          _id:{$month : '$startDates'},
+          numTourStarts:{$sum : 1},
+          tours:{$push : '$name'}                                                       //here we also have the "push" query in the mongoose so, that is used in adding the object into the array and will return a array 
+        }
+      },
+      {
+        $addFields:{ month: '$_id'}                                                    //here we have add all the data of the "_id" in the month field so later we can delete the "_id"
+      },
+      {
+        $project :{                                                                    //this project is used to show or not show the field ,0 means not to show it
+          _id:0,
+
+        }
+      },
+      {
+        $sort:{
+          numTourStarts:-1 
+        }
+      }
+    ])
+
+      res.status(200).json({
+        status: "success",
+        data: {
+          plan
+        },
+      }); 
+
+  }
+  catch(err){
+    res.status(400).json({
+      status:"fail",
+      message:err 
+    })
+  }
+}                                                                                      
