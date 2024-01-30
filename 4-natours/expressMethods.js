@@ -1,3 +1,6 @@
+//NOTE THIS FILE IS FOR READING PURPOSE ONLY
+
+
 const express=require('express');
 const fs=require('fs');
 const app=express();
