@@ -22,7 +22,7 @@ const catchAsync=require('../utils/catchAsync');
 //================================HERE WE HAVE MADE THE all TOUR's CALLBACKS SEPERATELY =============================
 
 
-//                  =========================GET ALL TOURS=========================                  //how the "catchAsync" works refer the catch Async
+//                  =========================GET ALL TOURS=========================                  //how the "catchAsync" works for more  refer the catchAsync.js
 
 
 exports.getAllTours = catchAsync(async(req, res,next) => {                                                                            //here this line will says that it will fetches the query that is written in the postman to get the speciffic data,means if i write this in the header of postman "127.0.0.1:3000/api/v1/tours?duration=5&difficulty=easy" then this console.log will return me this { duration: '5', difficulty: 'easy' },  
@@ -31,7 +31,7 @@ exports.getAllTours = catchAsync(async(req, res,next) => {                      
   console.log(req.query); 
   //  ====executes Query ====
   const features=new APIFeatures(Tour.find(),req.query).filter().sort().limitFields().paginate();            //for this explanation read in the "apiFeatures.js"                                  
-  const tours=await features.query;                                                                         //this will returns the all the data related to the "Tour",so their is the "req.query" written in it means that it will search or find the data on the basis of the "req.query" 
+  const tours=await features.query;                                                                         //this will returns the all the data related to the "Tour",so their is the "req.query" written in it means that it will search or find the data on the basis of the "req.query" ,here "feature.query" is exactly like the "features.Tours" means will returns all the tours data
   
   // =====sends responce===
   res.status(200).json({
