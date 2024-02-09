@@ -24,7 +24,7 @@ router
   .get(tourController.getAllTours)
   .post( tourController.createTour);                                          //here we have making the "middlware chaining" means that in the POST request first the "checkBody" middleware function will be get run and then further the code will proceeds
 
-//==========================Responding to URL parameters means (when we hit '127.0.0.1:3000/api/v1/tours/1') it will gives us the first object
+//==========================Responding to URL parameters means (when we hit '127.0.0.1:3000/api/v1/tours/1') it will gives us the first object 
 //========================================PATCH & DELETE METHOD===========================================================
 
 router

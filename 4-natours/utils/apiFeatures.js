@@ -7,7 +7,7 @@
 //HOW TO INITIALIZE ===>   const features=new APIFeatures(Tour.find(),req.query).filter().sort().limitFields().paginate();       //here we have initialized the object and also reinitialized the object                                      
                       //   const tours=await features.query;                                                                         
 //so here you can see that we have made the method chaining in the "APIFeature" and so our query's data will pass on all these functions and get modified one by one 
-//then at last when all the modification will completeswe will save the final result in the "tours" by the "features.query" that means  "the last result of feature's .find() method result" 
+//then at last when all the modification will completes we will save the final result in the "tours" by the "features.query" that means  "the last result of feature's .find() method result" 
 
 
 
@@ -69,7 +69,7 @@ class APIFeatures{                                                              
            //4.   ==============Pagination==============
   
       //page=2 & limit=10                                                           //so this below line says that we have 10 entries per page and we want to go on the second page then we have to skip 10 pages to reach the 2nd page so the below "query" is the to reach at the second page if you want to go 4th page then the code will be "skip(30).limit(10)"
-         const page=this.queryString.page*1 || 1;                                               //here in this line we have defined the default value of the page means if we have 1000 entries and user has not defined the page then it will not shows the 1000 entry in 1 page means it will by default shows page no. 1, here we have made the string of the user input(query.page) by mul. 1 and writes the ogic that if user has not defined the page then make page by default 1
+         const page=this.queryString.page*1 || 1;                                               //here in this line we have defined the default value of the page means if we have 1000 entries and user has not defined the page then it will not shows the 1000 entry in 1 page means it will by default shows page no. 1, here we have made the string of the user input(query.page) by mul. 1 and writes the logic that if user has not defined the page then make page by default 1
          const limit=this.queryString.limit* 1 || 100;  
          const skip=(page-1)*limit;
          this.query=this.query.skip(skip).limit(limit) 

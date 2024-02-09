@@ -5,7 +5,7 @@ const express=require('express');
 const fs=require('fs');
 const app=express();
 
-app.use(express.json());                                                                       //this line tells about the middleware, middleware will be stands between request and responce to modify data,for "POST" method we will need the Middlware ,more on the middleware in next lectures, in middleware the request will be passes through, if you cannot uses the middleware here then you cannot sees the json data in the vs code terminal that we have send from the postMan's body
+app.use(express.json());                                                                       //this line tells about the middleware, middleware will be stands between request and responce to modify data,for "POST" method we will need the Middlware ,more on the middleware in next lectures,=> in middleware the request will be passes through, if you cannot uses the middleware here then you cannot sees the json data in the vs code terminal that we have send from the postMan's body
 
                     // =======GET method ===========
 app.get('/',(req,res)=>{
@@ -38,7 +38,7 @@ app.post('/api/v1/tours',(req,res)=>{
     console.log(req.body)                                                               //here in the post request we uses the "req" more. here the 'body' is available in the postman bcse of the middleware
     
    const newId=tours[tours.length-1].id+1 ;                                               //here we have created the code for generating the new or latest id for our latest object to get add
-   const newTour=Object.assign({id:newId},req.body);                                      //so in this line we merge two objects to fit our new id in the data of body of postman, for tha we have used "Object.assign()"=> that is the method to merge the two objects to create one new, here in the assign() method the second argument is the "req.body" means it is the message or the data that we types in the "PostMan"'s body and we uses it here
+   const newTour=Object.assign({id:newId},req.body);                                      //so in this line we merge two objects to fit our new id in the data of body of postman, for that we have used "Object.assign()"=> that is the method to merge the two objects to create one new, here in the assign() method the second argument is the "req.body" means it is the message or the data that we types in the "PostMan"'s body and we uses it here
 
    tours.push(newTour); 
                                                                                          //now by this file we have mergerd or push the new object of "newTour" so the tours is ready to updated in our actual file
