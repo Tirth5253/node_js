@@ -3,7 +3,8 @@ const app = express();
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
-app.use(express.json()); //this line tells about the middleware, middleware will be stands between request and responce to modify data,for "POST" method we will need the Middlware ,more on the middleware in next lectures, in middleware the request will be passes through, if you cannot uses the middleware then you cannot sees the json data in the vs code terminal that we have send from the postMan's body   ,,here the "use" method is used to add the middleware in the middleware Stack
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
@@ -39,15 +40,15 @@ app.all("*", (req, res, next) => {
 
 //==============================================Body Parser Middlewares==============================================
 app.use(express.json({ limit: "10kb" })); //this line tells about the middleware, middleware will be stands between request and responce to modify data,for "POST" method we will need the Middlware ,more on the middleware in next lectures, in middleware the request will be passes through, if you cannot uses the middleware then you cannot sees the json data in the vs code terminal that we have send from the postMan's body   ,,here the "use" method is used to add the middleware in the middleware Stack
-app.use(express.static(`${__dirname}/starter/public`)); //here this is the middleware that is used to access the static files like html,images,any file via "Browser URL" you dont have to write the "public" in the browser like there is html file in the public than you can access by this "http://127.0.0.1:3000/overview.html"
+// app.use(express.static(`${__dirname}/starter/public`)); //here this is the middleware that is used to access the static files like html,images,any file via "Browser URL" you dont have to write the "public" in the browser like there is html file in the public than you can access by this "http://127.0.0.1:3000/overview.html"
 
-//===============================================CREATING OUR OWN MIDDLEWARE===========================================
+//===========================================DATA SANITIZATION=====================================================
+//data sanitization means to clean all the data that comes into app from the malicious code,and in this case we are trying to do this two attacks , and this is the best place for this middleware to place after we fetches the json data from the user
 
-// app.use((req, res, next) => {
-//                                                                                         //here in this section we makes our own middleware..there is middleware STACK between every request and responce,so every request passes through vareius and many middleware ,and that middleware makes changes according to their code , and to jump from one middleWare to another there is a function "NEXT" at last of the every middlewares here we have also the third argument as a "next" you can name anything you want, here you have to be carefull with the order of the code of the middleware bcse if you defines it bottom we will not get any message from middleware bcse  it will sends the message to all the HTTP methods that are below to it
-//   console.log("Hello from the middleWare 🖐🏽");
-//   next();                                                                                //IF we don't use the "next()" then our Req. Res. will get stuck and user will not get any messages
-// });
+// =======>1). Data sanitization against NoSql injection                                      //EX. so in this attack even you do not have the email then still you can login for ex.. in the body of postman { "email":{$gt:""}, "password":"2232323"} this will logs us as the admin bcse  this condition "email":{$gt:""} will always gives us the true and for this type of the problem we uses the package called the "express-mongo-sanitize"
+app.use(mongoSanitize());
+// 2). Data sanitization again XSS                                                           //when some user is trying to insert some malicious html code with the some JS code  if it would inject to the our site then this could really affect the our website
+app.use(xss());
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
