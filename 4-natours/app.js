@@ -2,12 +2,16 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 app.use(express.json()); //this line tells about the middleware, middleware will be stands between request and responce to modify data,for "POST" method we will need the Middlware ,more on the middleware in next lectures, in middleware the request will be passes through, if you cannot uses the middleware then you cannot sees the json data in the vs code terminal that we have send from the postMan's body   ,,here the "use" method is used to add the middleware in the middleware Stack
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
 const tourRouter = require("./routes/tourRoutes"); //here we have imported the router middleWare function from the file of "tourRoutes"  so we can use it as here in the "app.use('/api/v1/tours',tourRouter) " we actually get what we exported in that file so in that file we actually imported the "router" so here we get that
 const userRouter = require("./routes/userRoutes");
+
+//======================================SET security HTTP headers midd.===========================================     //if you go to the postman and see the header and then you will ssee some extra heaxers that defines the security headers
+app.use(helmet());
 
 //=======================================IMPLEMENTING THE RATE LIMITING===================================================
 
@@ -33,6 +37,8 @@ app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 400)); //here we passing the "Apperr" in the next means midd. ware will recognize that erroe has been occured and then it will skips all the middlware belows it and directly jumps to our global error handling middleware , bcse that middleware also have the "err" property
 });
 
+//==============================================Body Parser Middlewares==============================================
+app.use(express.json({ limit: "10kb" })); //this line tells about the middleware, middleware will be stands between request and responce to modify data,for "POST" method we will need the Middlware ,more on the middleware in next lectures, in middleware the request will be passes through, if you cannot uses the middleware then you cannot sees the json data in the vs code terminal that we have send from the postMan's body   ,,here the "use" method is used to add the middleware in the middleware Stack
 app.use(express.static(`${__dirname}/starter/public`)); //here this is the middleware that is used to access the static files like html,images,any file via "Browser URL" you dont have to write the "public" in the browser like there is html file in the public than you can access by this "http://127.0.0.1:3000/overview.html"
 
 //===============================================CREATING OUR OWN MIDDLEWARE===========================================
