@@ -78,7 +78,7 @@ exports.login = catchAsync(async (req, res, next) => {
   const token = signToken(user._id);
 
   res.cookie("jwt", token, {
-    //her the 2nd argument is token then, in third our validation starts the expires will basicslly checks if its expired or not, the expiration is from the now to 90 days later the secure true will do that the cookie will only be sent to the encrypted connection, and httpOnly true means by this the cookie cannot be used or modified by the browser
+    //her the 2nd argument is token then, in third our validation starts the expires will basicslly checks if its expired or not, the expiration is from the now to 90 days later the secure true will do that the cookie will only be sent to the encrypted connection, and httpOnly true means by this the cookie cannot be used or modified by the browser, //in this the secure true means the cookie will only be send to the secure connection means the https only connection, right now we are using hte postman so we are commenting it , // this is the inpoerant to prevent cross site attacks , by this it will store the cookie then send it automatically along with the every request., so if you are using he production dev then use the secure:True
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
