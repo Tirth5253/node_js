@@ -52,7 +52,7 @@ app.use(xss());
 
 //==========================================Preventing parameter pollution========================================
 //parameter pollution means when a user is adds the more than two identical params in the url then we can have the error like:::: ?sort=duration&sort=price
-app.use(hpp());
+app.use(hpp({ whitelist: ["duration"] }));
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
