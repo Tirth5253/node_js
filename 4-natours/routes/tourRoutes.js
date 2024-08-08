@@ -2,6 +2,7 @@
 const express = require("express");
 const app = express();
 const router = express.Router();
+const authController=require('./../controllers/authController')
 app.use("/api/v1/tours", router);                                                                       //here in this code we have made the router which we made a custom router for Tour data and then so we can use it all along the application that's why ,we have made it the "MiddleWare" and now instead of "app" we will use "router" and in the ".route" we only have to add those path remaining that comes after the "/api/v1/tours" ===> this process is called the "Mounting the router"
 
 const tourController = require("./../controllers/tourController");                                      //now all the functions that are exported now in the "tourController"
@@ -21,7 +22,7 @@ router.route('/top-5-cheap').get(tourController.aliasTopTours ,  tourController.
 
 router
   .route("/")
-  .get(tourController.getAllTours)
+  .get(authController.protect,tourController.getAllTours)                        //here first our authController's protect function will get run in that if user is authenticated then the second, tourController.getAllTours will run
   .post( tourController.createTour);                                          //here we have making the "middlware chaining" means that in the POST request first the "checkBody" middleware function will be get run and then further the code will proceeds
 
 //==========================Responding to URL parameters means (when we hit '127.0.0.1:3000/api/v1/tours/1') it will gives us the first object 
@@ -31,7 +32,7 @@ router
   .route("/:id")
   .get(tourController.getTour)
   .patch(tourController.updateTour)
-  .delete(tourController.deleteTour);
+  .delete(authController.protect,  authController.restrictTo('admin','lead-guide'),  tourController.deleteTour);                       //here we have used the "authorization" in the delete tour route means only admin role be able to deletes the tour, and before that we still checks that the user is logged in or not 
 
 
 
