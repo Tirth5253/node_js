@@ -5,6 +5,7 @@ const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
+const hpp = require("hpp");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
@@ -44,11 +45,14 @@ app.use(express.json({ limit: "10kb" })); //this line tells about the middleware
 
 //===========================================DATA SANITIZATION=====================================================
 //data sanitization means to clean all the data that comes into app from the malicious code,and in this case we are trying to do this two attacks , and this is the best place for this middleware to place after we fetches the json data from the user
-
 // =======>1). Data sanitization against NoSql injection                                      //EX. so in this attack even you do not have the email then still you can login for ex.. in the body of postman { "email":{$gt:""}, "password":"2232323"} this will logs us as the admin bcse  this condition "email":{$gt:""} will always gives us the true and for this type of the problem we uses the package called the "express-mongo-sanitize"
 app.use(mongoSanitize());
-// 2). Data sanitization again XSS                                                           //when some user is trying to insert some malicious html code with the some JS code  if it would inject to the our site then this could really affect the our website
+// =======>2). Data sanitization again XSS                                                           //when some user is trying to insert some malicious html code with the some JS code  if it would inject to the our site then this could really affect the our website
 app.use(xss());
+
+//==========================================Preventing parameter pollution========================================
+//parameter pollution means when a user is adds the more than two identical params in the url then we can have the error like:::: ?sort=duration&sort=price
+app.use(hpp());
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
